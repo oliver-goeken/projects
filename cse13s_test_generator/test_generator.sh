@@ -1,5 +1,36 @@
 #!/bin/bash
 
+# args: out_file1, out_file2, err_file, test_file
+cleanup(){
+    echo "rm $1" >> $4
+    echo "rm $2" >> $4
+    echo "rm $3" >> $4
+}
+
+
+#gotta create all the files before any of the funcs are called
+#need diff names than just error name otherwise might overlap
+
+# args: case1_arg1, case1_arg2, case2_arg1, case2_arg2,
+#       out_file1,  out_file2,  err_file,   test_file
+runandcheck(){
+    echo "./calc $1 $2 > $5" >> $8
+
+    echo "if [ $? -eq 0 ]; then" >> $8
+    echo "    echo 'exit code 0 on first test case'" >> $8
+    cleanup $5 $6 $7 $8
+    echo "    exit 1" >> $8
+    echo "fi" >> $8    
+
+    echo "./calc $3 $4 > $6" >> $8
+
+    echo "if [ $? -eq 0 ]; then" >> $8
+    echo "    echo 'exit code 0 on second test case'" >> $8
+    cleanup $5 $6 $7 $8
+    echo "    exit 1" >> $8
+    echo "fi" >> $8
+}
+
 case1_arg1=""
 case1_arg2=""
 case2_arg1=""
